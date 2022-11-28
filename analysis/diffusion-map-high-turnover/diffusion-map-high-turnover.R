@@ -31,8 +31,8 @@ niche$centroid <- matrix( runif(2*n.spec, 0, 1), nrow = 2, ncol = n.spec)
 # Randomly select values for scaling factors and cos(theta)
 niche$l1 <- runif(n.spec, 0.005, 0.01) # Scaling factor lambda 1
 niche$l2 <- runif(n.spec, 0.005, 0.01) # Scaling factor lambda 2
-niche$cos <- runif(n.spec, 0, 1) # Cos(theta)
-niche$sin <- sample( c(-1,1), replace = T, n.spec) * sqrt( 1 - niche$cos^2 )
+niche$cos <- runif(n.spec, -1, 1) # Cos(theta)
+niche$sin <- sample( c(-1, 1), replace = T, n.spec) * sqrt( 1 - niche$cos^2 ) # Sin(theta)
 
 # Initialize array to store values for covariance matrix
 niche$Cov <- array(dim = c(2,2,n.spec))
@@ -92,9 +92,9 @@ dens.dt <- dens.dt[, lapply(.SD, as.numeric), by = spec]
 # Plot
 png(filename = paste(here(), "/figures/diffusion-map-high-turnover/",
                      "contour-plot.png", sep = ""),
-    height = 10, width = 16, units = "in", res = 72)
+    height = 3, width = 3, units = "in", res = 72)
 ggplot(dens.dt, aes(x = x, y = y, z = dens, color = spec)) + 
-  geom_contour() + 
+  geom_contour(show.legend = F) + 
   theme_bw()
 dev.off()
 
@@ -148,10 +148,11 @@ for (i in 1:n.sim) {
 #### Plot sampling grid on contour plot-----------------------------------------
 png(filename = paste(here(), "/figures/diffusion-map-high-turnover/",
                      "contour-sample.png", sep = ""),
-    height = 10, width = 16, units = "in", res = 72)
+    height = 3, width = 3, units = "in", res = 72)
 ggplot() +
-  geom_contour(data = dens.dt, aes(x = x, y = y, z = dens, color = spec)) + 
-  geom_point(data = samp, aes(x = x.samp, y = y.samp), size = 2) + 
+  geom_contour(data = dens.dt, aes(x = x, y = y, z = dens, color = spec),
+               show.legend = F) + 
+  geom_point(data = samp, aes(x = x.samp, y = y.samp), size = 0.5) + 
   theme_bw()
 dev.off()
 
@@ -180,8 +181,6 @@ for (i in 1:n.sim){
 dj.summary <- summary(dj)
 dj.summary <- unclass(dj.summary)
 dj.summary <- data.table(t(dj.summary))
-
-test <- unclass(dj.summary)
 
 write.csv(dj.summary, file = paste(here(), 
                                    "/analysis/diffusion-map-high-turnover/",
@@ -261,50 +260,46 @@ png(filename = paste(here(), "/figures/diffusion-map-high-turnover/",
                      "eigenvalue-plot.png", sep = ""),
     height = 10, width = 16, units = "in", res = 72)
 ggplot(eig.v, aes(x = rank, y = 1/val)) + 
-  geom_point(size = 2, show.legend = F) + 
-  labs(title = "Diffusion Map Eigenvalues",
-       x = "Rank", y = "1/value") +
+  geom_point(size = 0.1, show.legend = F) + 
+  labs(x = "Rank", y = "1/value") +
   theme_bw()
 dev.off()
 
 
 # Diffmap plot
-png(filename = paste(here(), "/figures/diffusion-map-high-turnover/",
-                     "diffusion-maps-plot.png", sep = ""),
-    height = 10, width = 16, units = "in", res = 72)
-ggplot(site.dim, aes(x = dim1, y = dim2, color = sim)) + 
-  geom_point(show.legend = F) + 
-  labs(title = "Diffusion Map",
-       x = "Dimension 1", y = "Dimension 2") + 
-  theme_bw() + 
-  theme(legend.key.size = unit(0.3, "in"),
-        text = element_text(size = 30))
-dev.off()
+# png(filename = paste(here(), "/figures/diffusion-map-high-turnover/",
+#                      "diffusion-maps-plot.png", sep = ""),
+#     height = 10, width = 16, units = "in", res = 72)
+# ggplot(site.dim, aes(x = dim1, y = dim2, color = sim)) + 
+#   geom_point(show.legend = F) + 
+#   labs(title = "Diffusion Map",
+#        x = "Dimension 1", y = "Dimension 2") + 
+#   theme_bw() + 
+#   theme(legend.key.size = unit(0.3, "in"),
+#         text = element_text(size = 30))
+# dev.off()
 
 # Diffmap plot with text labels
-png(filename = paste(here(), "/figures/diffusion-map-high-turnover/",
-                     "diffusion-maps-text-plot.png", sep = ""),
-    height = 10, width = 16, units = "in", res = 72)
-ggplot(site.dim, aes(x = dim1, y = dim2, color = sim)) + 
-  geom_text(aes(label = site),show.legend = F, size = 2) + 
-  labs(title = "Diffusion Map",
-       x = "Dimension 1", y = "Dimension 2") + 
-  theme_bw() + 
-  theme(legend.key.size = unit(0.3, "in"),
-        text = element_text(size = 30))
-dev.off()
+# png(filename = paste(here(), "/figures/diffusion-map-high-turnover/",
+#                      "diffusion-maps-text-plot.png", sep = ""),
+#     height = 10, width = 16, units = "in", res = 72)
+# ggplot(site.dim, aes(x = dim1, y = dim2, color = sim)) + 
+#   geom_text(aes(label = site),show.legend = F, size = 2) + 
+#   labs(title = "Diffusion Map",
+#        x = "Dimension 1", y = "Dimension 2") + 
+#   theme_bw() + 
+#   theme(legend.key.size = unit(0.3, "in"),
+#         text = element_text(size = 30))
+# dev.off()
 
 # Single diffusion map
 png(filename = paste(here(), "/figures/diffusion-map-high-turnover/",
                      "single-diffusion-map-plot.png", sep = ""),
-    height = 10, width = 16, units = "in", res = 72)
+    height = 3, width = 3, units = "in", res = 72)
 ggplot(site.dim[sim == 1,], aes(x = dim1, y = dim2)) + 
-  geom_point(show.legend = F, size = 2) + 
-  labs(title = "Diffusion Map",
-       x = "Dimension 1", y = "Dimension 2") + 
-  theme_bw() + 
-  theme(legend.key.size = unit(0.3, "in"),
-        text = element_text(size = 30))
+  geom_point(show.legend = F, size = 0.5) + 
+  labs(x = "Dimension 1", y = "Dimension 2") + 
+  theme_bw() 
 dev.off()
 
 
@@ -335,12 +330,11 @@ summary(diff.cor[, pearson])
 # Plot diffusion distance vs environmental distance
 png(filename = paste(here(), "/figures/diffusion-map-high-turnover/",
                      "diffusion-distance-plot.png", sep = ""),
-    height = 10, width = 16, units = "in", res = 72)
+    height = 3, width = 3, units = "in", res = 72)
 ggplot(dist.frame, aes(x = env.dist, y = diff.dist)) + 
-  geom_point(show.legend = F) + 
+  geom_point(show.legend = F, size = 0.1) + 
   theme_bw() +
-  labs(title = "Diffusion Distance vs. Environmental Distance",
-       x = "Environmental Distance", y = "Diffusion Distance")
+  labs(x = "Environmental Distance", y = "Diffusion Distance")
 dev.off()
 
 #### Horn Distance
@@ -373,12 +367,11 @@ summary(hd.cor[, pearson])
 # Plot diffusion distance vs environmental distance
 png(filename = paste(here(), "/figures/diffusion-map-high-turnover/",
                      "horn-distance-plot.png", sep = ""),
-    height = 10, width = 16, units = "in", res = 72)
+    height = 3, width = 3, units = "in", res = 72)
 ggplot(hd.frame, aes(x = env.dist, y = horn.dist)) + 
-  geom_point(show.legend = F) + 
+  geom_point(show.legend = F, size = 0.1) + 
   theme_bw() + 
-  labs(title = "Horn Distance vs. Environmental Distance",
-       x = "Environmental Distance", y = "Horn Distance")
+  labs(x = "Environmental Distance", y = "Horn Distance")
 dev.off()
 
 #### Compare ordinations--------------------------------------------------------
@@ -416,7 +409,7 @@ summary(pcoa.ss)
 
 png(filename = paste(here(), "/figures/diffusion-map-high-turnover/",
                      "pcoa-procrustes-plot.png", sep = ""),
-    height = 10, width = 16, units = "in", res = 72)
+    height = 3.5, width = 3.5, units = "in", res = 72)
 plot(proc.pcoa[[1]])
 dev.off()
 
@@ -439,7 +432,7 @@ summary(nmds.ss)
 
 png(filename = paste(here(), "/figures/diffusion-map-high-turnover/",
                      "nmds-procrustes-plot.png", sep = ""),
-    height = 10, width = 16, units = "in", res = 72)
+    height = 3.5, width = 3.5, units = "in", res = 72)
 plot(proc.nmds[[1]])
 dev.off()
 
@@ -463,6 +456,6 @@ summary(diff.ss)
 
 png(filename = paste(here(), "/figures/diffusion-map-high-turnover/",
                      "diffmap-procrustes-plot.png", sep = ""),
-    height = 10, width = 16, units = "in", res = 72)
+    height = 3.5, width = 3.5, units = "in", res = 72)
 plot(proc.diff[[1]])
 dev.off()
