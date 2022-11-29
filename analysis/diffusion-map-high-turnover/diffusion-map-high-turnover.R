@@ -400,7 +400,7 @@ for (i in 1:n.sim) {
 nmds.horn <- vector(mode = "list", length = n.sim)
 
 for (i in 1:n.sim) {
-  nmds.horn[[i]] <- metaMDS(hd.list[[i]])
+  nmds.horn[[i]] <- metaMDS(hd.list[[i]], k = 2)
 }
 
 # Make reference matrix of environmental variables
