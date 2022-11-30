@@ -411,7 +411,7 @@ proc.pcoa <- vector(mode = "list", length = n.sim)
 
 for (i in 1:n.sim) {
   proc.pcoa[[i]] <- procrustes(env.mat, pcoa.horn[[i]]$vectors[, 1:2],
-                               scale = T, symmetric = F)
+                               symmetric = T)
 }
 
 # Extract sum of squares and summarize
@@ -435,7 +435,7 @@ proc.nmds <- vector(mode = "list", length = n.sim)
 
 for (i in 1:n.sim) {
   proc.nmds[[i]] <- procrustes(env.mat, nmds.horn[[i]]$points,
-                               scale = T, symmetric = F)
+                               symmetric = T)
 }
 
 # Extract sum of squares and summarize
@@ -460,7 +460,7 @@ proc.diff <- vector(mode = "list", length = n.sim)
 for (i in 1:n.sim) {
   proc.diff[[i]] <- procrustes(env.mat, 
                                site.dim[sim == i, as.matrix(.(dim1, dim2))],
-                               scale = T, symmetric = F)
+                               symmetric = T)
 }
 
 # Extract sum of squares and summarize
