@@ -282,32 +282,6 @@ ggplot(eig.sd, aes(x = rank, y = mean)) +
   theme_bw()
 dev.off()
 
-# Diffmap plot
-# png(filename = paste(here(), "/figures/diffusion-map-high-turnover/",
-#                      "diffusion-maps-plot.png", sep = ""),
-#     height = 10, width = 16, units = "in", res = 600)
-# ggplot(site.dim, aes(x = dim1, y = dim2, color = sim)) + 
-#   geom_point(show.legend = F) + 
-#   labs(title = "Diffusion Map",
-#        x = "Dimension 1", y = "Dimension 2") + 
-#   theme_bw() + 
-#   theme(legend.key.size = unit(0.3, "in"),
-#         text = element_text(size = 30))
-# dev.off()
-
-# Diffmap plot with text labels
-# png(filename = paste(here(), "/figures/diffusion-map-high-turnover/",
-#                      "diffusion-maps-text-plot.png", sep = ""),
-#     height = 10, width = 16, units = "in", res = 600)
-# ggplot(site.dim, aes(x = dim1, y = dim2, color = sim)) + 
-#   geom_text(aes(label = site),show.legend = F, size = 2) + 
-#   labs(title = "Diffusion Map",
-#        x = "Dimension 1", y = "Dimension 2") + 
-#   theme_bw() + 
-#   theme(legend.key.size = unit(0.3, "in"),
-#         text = element_text(size = 30))
-# dev.off()
-
 # Single diffusion map
 png(filename = paste(here(), "/figures/diffusion-map-high-turnover/",
                      "single-diffusion-map-plot.png", sep = ""),
