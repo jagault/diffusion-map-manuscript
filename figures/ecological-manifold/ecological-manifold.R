@@ -46,6 +46,8 @@ for (col in 1:M){
   abundance[,col] <- rpois(N, dens[,col]*area)
 }
 
+relabundance <- t(apply(abundance, 1, function(x) x/sum(x)))
+
 #### Plot assemblage compositions-----------------------------------------------
 # Format data
 cm <- relabundance
