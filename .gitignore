@@ -2,3 +2,6 @@
 .Rhistory
 .RData
 .Ruserdata
+.config/rstudio
+.local/share/rstudio
+.rstudio/
