@@ -263,7 +263,7 @@ png(filename = paste(here(), "/figures/diffusion-map-high-turnover/",
     height = 2, width = 3, units = "in", res = 600)
 ggplot(eig.v, aes(x = rank, y = 1/val)) + 
   geom_point(size = 0.1, show.legend = F) + 
-  labs(x = "Rank", y = "1/value") +
+  labs(x = "Rank", y = expression(1/lambda)) +
   theme_bw()
 dev.off()
 
@@ -279,7 +279,7 @@ png(filename = paste(here(), "/figures/diffusion-map-high-turnover/",
 ggplot(eig.sd, aes(x = rank, y = mean)) + 
   geom_point(size = 0.5) +
   geom_errorbar(aes(ymin = mean  - sd, ymax = mean + sd), width = 0.1) +
-  labs(x = "Rank", y = "1/value") +
+  labs(x = "Rank", y = expression(1/lambda)) +
   theme_bw()
 dev.off()
 
