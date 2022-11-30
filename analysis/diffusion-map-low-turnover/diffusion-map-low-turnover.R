@@ -1,12 +1,8 @@
 #### Load required libraries and helper functions
 library(here)
 library(pracma)
-library(plot3D)
 library(ggplot2)
 library(data.table)
-library(car)
-library(mgcv)
-library(ecodist)
 library(vegan)
 library(ape)
 
@@ -429,8 +425,8 @@ env.mat <- as.matrix(cbind(grid.samp[1, ], grid.samp[2, ]))
 proc.pcoa <- vector(mode = "list", length = n.sim)
 
 for (i in 1:n.sim) {
-  proc.pcoa[[i]] <- procrustes(env.mat, pcoa.horn[[i]]$vectors[, 1:2],
-                               symmetric = T)
+  proc.pcoa[[i]] <- vegan::procrustes(env.mat, pcoa.horn[[i]]$vectors[, 1:2], 
+                                      symmetric = T)
 }
 
 # Extract sum of squares and summarize
@@ -463,8 +459,8 @@ dev.off()
 proc.nmds <- vector(mode = "list", length = n.sim)
 
 for (i in 1:n.sim) {
-  proc.nmds[[i]] <- procrustes(env.mat, nmds.horn[[i]]$points,
-                               symmetric = T)
+  proc.nmds[[i]] <- vegan::procrustes(env.mat, nmds.horn[[i]]$points, 
+                                      symmetric = T)
 }
 
 # Extract sum of squares and summarize
@@ -497,9 +493,9 @@ dev.off()
 proc.diff <- vector(mode = "list", length = n.sim)
 
 for (i in 1:n.sim) {
-  proc.diff[[i]] <- procrustes(env.mat, 
-                               site.dim[sim == i, as.matrix(.(dim1, dim2))],
-                               symmetric = T)
+  proc.diff[[i]] <- vegan::procrustes(env.mat,  
+                                      site.dim[sim == i, as.matrix(.(dim1, dim2))], 
+                                      symmetric = T)
 }
 
 # Extract sum of squares and summarize
