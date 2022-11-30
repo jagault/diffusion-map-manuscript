@@ -7,9 +7,6 @@ library(ggplot2)
 library(RColorBrewer)
 library(gg3D)
 
-# source(here("R", "diffusion_map.R"))
-# source(here("R", "horn_overlap.R"))
-
 ### Generate response curves----------------------------------------------------
 set.seed(10)
 
@@ -32,7 +29,7 @@ color <- brewer.pal(10, "Paired")
 # Plot
 png(filename = paste(here(), "/figures/ecological-manifold/",
                      "repsonse-curves.png", sep = ""),
-    height = 2.5, width = 3.5, units = "in", res = 600)
+    height = 4.5, width = 5.5, units = "in", res = 600)
 matplot(as.data.frame(xseq), as.data.frame(niches), type='l', 
         xlab='Environmental Variable', ylab='Expected Species Density',
         col = color, lwd = 3)
@@ -63,7 +60,7 @@ setnames(cm.dt, "rn", "site")
 # Plot
 png(filename = paste(here(), "/figures/ecological-manifold/",
                      "manifold.png", sep = ""),
-    height = 3.5, width = 3.5, units = "in", res = 600)
+    height = 7, width = 7, units = "in", res = 600)
 ggplot(cm.dt, aes(x = A, y = B, z = C, color = env)) + 
   theme_void() + 
   scale_color_continuous(type = "viridis", name = "Env") + 
