@@ -63,7 +63,7 @@ setnames(cm.dt, "rn", "site")
 # Plot
 png(filename = paste(here(), "/figures/ecological-manifold/",
                      "manifold.png", sep = ""),
-    height = 5.5, width = 3.5, units = "in", res = 600)
+    height = 3.5, width = 3.5, units = "in", res = 600)
 ggplot(cm.dt, aes(x = A, y = B, z = C, color = env)) + 
   theme_void() + 
   scale_color_continuous(type = "viridis", name = "Env") + 
