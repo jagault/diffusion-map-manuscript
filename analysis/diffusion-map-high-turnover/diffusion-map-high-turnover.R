@@ -12,8 +12,6 @@ library(ape)
 
 source(here("R", "diffusion_map.R"))
 source(here("R", "horn_overlap.R"))
-source(here("R", "env_dist.R"))
-
 
 #### Generate Response Surfaces-------------------------------------------------
 set.seed(450)
@@ -27,7 +25,7 @@ niche <- list()
 # Specify mean of species response surface for env vars x and y
 niche$centroid <- matrix( runif(2*n.spec, 0, 1), nrow = 2, ncol = n.spec) 
 
-# Generate Variance/Covariance matrix
+### Generate Variance/Covariance matrix
 # Randomly select values for scaling factors and cos(theta)
 niche$l1 <- runif(n.spec, 0.005, 0.01) # Scaling factor lambda 1
 niche$l2 <- runif(n.spec, 0.005, 0.01) # Scaling factor lambda 2
@@ -42,6 +40,8 @@ niche$Cov[1,1,] <- niche$l1 * niche$cos^2 + niche$l2 * niche$sin^2
 niche$Cov[2,2,] <- niche$l1 * niche$sin^2 + niche$l2 * niche$cos^2
 niche$Cov[1,2,] <- niche$Cov[2,1,] <- (niche$l1 - niche$l2) * niche$cos * niche$sin
 
+
+### Evaluate response surfaces on environmental grid
 # Create environmental grid from 0-1 in steps of 0.2
 x <- seq(0, 1, by = 0.02)
 mesh <- meshgrid(x)
@@ -131,7 +131,7 @@ for (spec in 1:n.spec){
   comm.lambda[, spec] <- as.vector(lambda[,,spec])
 }
 
-# Generate multiple realizations
+# Generate multiple realizations of assemblages
 n.sim <- 100 # Number of realizations
 
 comm <- vector(mode = "list", length = n.sim)
@@ -189,7 +189,7 @@ write.csv(dj.summary, file = paste(here(),
 
 #### Diffusion map and plot-----------------------------------------------------
 # Calculate distances and convert to symmetric similarity matrix
-s <- hm
+s <- hm # Use horn overlap already calculated above
 
 for (i in 1:n.sim) {
   diag(s[[i]]) <- 0
@@ -228,6 +228,7 @@ for (i in 1:n.sim) {
                                                     %in% (k + 1)])
 }
 
+# Convert to single datatable
 site.dim <- rbindlist(dim.list, idcol = T)
 
 # Set column names and column order
@@ -475,6 +476,7 @@ write.csv(pcoa.ss.summ,
                        "pcoa-procrustes-summary.csv", 
                        sep = ""))
 
+# Single plot with procrustes sum of squares error
 png(filename = paste(here(), "/figures/diffusion-map-high-turnover/",
                      "pcoa-procrustes-plot.png", sep = ""),
     height = 3.5, width = 3.5, units = "in", res = 600)
@@ -508,6 +510,7 @@ write.csv(nmds.ss.summ,
                        "nmds-procrustes-summary.csv", 
                        sep = ""))
 
+# Single plot with procrustes sum of squares error
 png(filename = paste(here(), "/figures/diffusion-map-high-turnover/",
                      "nmds-procrustes-plot.png", sep = ""),
     height = 3.5, width = 3.5, units = "in", res = 600)
@@ -542,6 +545,7 @@ write.csv(diff.ss.summ,
                        "diffmap-procrustes-summary.csv", 
                        sep = ""))
 
+# Single plot with procrustes sum of squares error
 png(filename = paste(here(), "/figures/diffusion-map-high-turnover/",
                      "diffmap-procrustes-plot.png", sep = ""),
     height = 3.5, width = 3.5, units = "in", res = 600)
