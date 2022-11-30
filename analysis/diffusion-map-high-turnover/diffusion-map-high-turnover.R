@@ -153,7 +153,8 @@ ggplot() +
   geom_contour(data = dens.dt, aes(x = x, y = y, z = dens, color = spec),
                show.legend = F) + 
   geom_point(data = samp, aes(x = x.samp, y = y.samp), size = 0.5) + 
-  theme_bw()
+  theme_bw() + 
+  labs(x = "Environmental Variable 1", y = "Environmental Variable 2")
 dev.off()
 
 
