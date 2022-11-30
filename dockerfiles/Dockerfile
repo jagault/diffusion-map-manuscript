@@ -1,5 +1,8 @@
 FROM rocker/rstudio:4.1.2
 
+RUN apt-get update && apt-get install -y \
+    r-cran-tcltk2
+
 RUN install2.r \
     data.table \
     here \
@@ -7,4 +10,7 @@ RUN install2.r \
     ape \
     ggplot2 \
     RColorBrewer \
-    gg3D
+    devtools \
+    pracma
+
+RUN R -e "devtools::install_github('AckerDWM/gg3D')"
