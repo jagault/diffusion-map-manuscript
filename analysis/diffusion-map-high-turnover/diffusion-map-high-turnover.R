@@ -179,7 +179,7 @@ for (i in 1:n.sim){
 }
 
 dj.summary <- summary(dj)
-dj.summary <- unclass(dj.summary)
+dj.summary <- round(unclass(dj.summary), 5)
 dj.summary <- data.table(t(dj.summary))
 
 write.csv(dj.summary, file = paste(here(), 
@@ -339,8 +339,30 @@ dist.frame[, sim := as.factor(sim)]
 diff.cor <- dist.frame[, .(spearman = cor(diff.dist, env.dist, 
                                           method = "spearman"),
                            pearson = cor(diff.dist, env.dist)), by = sim]
-summary(diff.cor[, spearman])
-summary(diff.cor[, pearson])
+
+# Summarize and write to file
+# Spearman
+diff.cor.spearman <- summary(diff.cor[, spearman])
+diff.cor.spearman <- round(unclass(diff.cor.spearman), 5)
+diff.cor.spearman <- data.table(t(diff.cor.spearman))
+
+write.csv(diff.cor.spearman, 
+          file = paste(here(), 
+                       "/analysis/diffusion-map-high-turnover/",
+                       "diffmap-spearman-summary.csv", 
+                       sep = ""))
+
+# Pearson
+diff.cor.pearson <- summary(diff.cor[, pearson])
+diff.cor.pearson <- unclass(diff.cor.pearson)
+diff.cor.pearson <- data.table((t(diff.cor.pearson)))
+
+write.csv(diff.cor.pearson, 
+          file = paste(here(), 
+                       "/analysis/diffusion-map-high-turnover/",
+                       "diffmap-pearson-summary.csv", 
+                       sep = ""))
+
 
 # Plot diffusion distance vs environmental distance
 png(filename = paste(here(), "/figures/diffusion-map-high-turnover/",
@@ -376,8 +398,29 @@ hd.frame[, sim := as.factor(sim)]
 # Calculate correlation 
 hd.cor <- hd.frame[, .(spearman = cor(horn.dist, env.dist, method = "spearman"),
                        pearson = cor(horn.dist, env.dist)), by = sim]
-summary(hd.cor[, spearman])
-summary(hd.cor[, pearson])
+
+# Summarize and write to file
+# Spearman
+hd.cor.spearman <- summary(hd.cor[, spearman])
+hd.cor.spearman <- round(unclass(hd.cor.spearman), 5)
+hd.cor.spearman <- data.table(t(hd.cor.spearman))
+
+write.csv(hd.cor.spearman, 
+          file = paste(here(), 
+                       "/analysis/diffusion-map-high-turnover/",
+                       "horn-spearman-summary.csv", 
+                       sep = ""))
+
+# Pearson
+hd.cor.pearson <- summary(hd.cor[, pearson])
+hd.cor.pearson <- unclass(hd.cor.pearson)
+hd.cor.pearson <- data.table((t(hd.cor.pearson)))
+
+write.csv(hd.cor.pearson, 
+          file = paste(here(), 
+                       "/analysis/diffusion-map-high-turnover/",
+                       "horn-pearson-summary.csv", 
+                       sep = ""))
 
 # Plot diffusion distance vs environmental distance
 png(filename = paste(here(), "/figures/diffusion-map-high-turnover/",
@@ -421,7 +464,16 @@ for (i in 1:n.sim) {
   pcoa.ss[i] <- proc.pcoa[[i]]$ss
 }
 
-summary(pcoa.ss)
+# Summarize and write to file
+pcoa.ss.summ <- summary(pcoa.ss)
+pcoa.ss.summ <- round(unclass(pcoa.ss.summ), 5)
+pcoa.ss.summ <- data.table(t(pcoa.ss.summ))
+
+write.csv(pcoa.ss.summ, 
+          file = paste(here(), 
+                       "/analysis/diffusion-map-high-turnover/",
+                       "pcoa-procrustes-summary.csv", 
+                       sep = ""))
 
 png(filename = paste(here(), "/figures/diffusion-map-high-turnover/",
                      "pcoa-procrustes-plot.png", sep = ""),
@@ -445,7 +497,16 @@ for (i in 1:n.sim) {
   nmds.ss[i] <- proc.nmds[[i]]$ss
 }
 
-summary(nmds.ss)
+# Summarize and write to file
+nmds.ss.summ <- summary(nmds.ss)
+nmds.ss.summ <- round(unclass(nmds.ss.summ), 5)
+nmds.ss.summ <- data.table(t(nmds.ss.summ))
+
+write.csv(nmds.ss.summ, 
+          file = paste(here(), 
+                       "/analysis/diffusion-map-high-turnover/",
+                       "nmds-procrustes-summary.csv", 
+                       sep = ""))
 
 png(filename = paste(here(), "/figures/diffusion-map-high-turnover/",
                      "nmds-procrustes-plot.png", sep = ""),
@@ -470,7 +531,16 @@ for (i in 1:n.sim) {
   diff.ss[i] <- proc.diff[[i]]$ss
 }
 
-summary(diff.ss)
+# Summarize and write to file
+diff.ss.summ <- summary(diff.ss)
+diff.ss.summ <- round(unclass(diff.ss.summ), 5)
+diff.ss.summ <- data.table(t(diff.ss.summ))
+
+write.csv(diff.ss.summ, 
+          file = paste(here(), 
+                       "/analysis/diffusion-map-high-turnover/",
+                       "diffmap-procrustes-summary.csv", 
+                       sep = ""))
 
 png(filename = paste(here(), "/figures/diffusion-map-high-turnover/",
                      "diffmap-procrustes-plot.png", sep = ""),
