@@ -426,7 +426,7 @@ summary(pcoa.ss)
 png(filename = paste(here(), "/figures/diffusion-map-high-turnover/",
                      "pcoa-procrustes-plot.png", sep = ""),
     height = 3.5, width = 3.5, units = "in", res = 600)
-plot(proc.pcoa[[1]])
+plot(proc.pcoa[[1]], main = "")
 dev.off()
 
 
@@ -450,7 +450,7 @@ summary(nmds.ss)
 png(filename = paste(here(), "/figures/diffusion-map-high-turnover/",
                      "nmds-procrustes-plot.png", sep = ""),
     height = 3.5, width = 3.5, units = "in", res = 600)
-plot(proc.nmds[[1]])
+plot(proc.nmds[[1]], main = "")
 dev.off()
 
 
@@ -475,5 +475,5 @@ summary(diff.ss)
 png(filename = paste(here(), "/figures/diffusion-map-high-turnover/",
                      "diffmap-procrustes-plot.png", sep = ""),
     height = 3.5, width = 3.5, units = "in", res = 600)
-plot(proc.diff[[1]])
+plot(proc.diff[[1]], main = "")
 dev.off()
