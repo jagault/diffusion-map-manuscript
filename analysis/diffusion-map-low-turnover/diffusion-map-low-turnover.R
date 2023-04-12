@@ -205,10 +205,11 @@ for (i in 1:n.sim) {
   site.eig[[i]] <- eigen(site.lap[[i]]$laplacian)
 }
 
-# Standardize eigenvectors
+# Weight eigenvectors by their respective eigenvalue
 for (i in 1:n.sim) {
-  site.eig[[i]]$vectors <- apply(site.eig[[i]]$vectors, MARGIN = 2, 
-                                 FUN = function(x) (x - mean(x))/sd(x))
+  for (j in 1:ncol(site.eig[[i]]$vectors)){
+    site.eig[[i]]$vectors[, j] <- site.eig[[i]]$vectors[, j]/site.eig[[i]]$values[j]
+  }
 }
 
 # Select number of dimensions to keep
