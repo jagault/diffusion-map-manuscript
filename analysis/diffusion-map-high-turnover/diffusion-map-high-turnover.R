@@ -101,7 +101,7 @@ n.samp <- 10
 
 set.seed(20)
 # Equally spaced samples along both environmental gradients.
-x.samp <- seq(0, 1, length.out = n.samp)
+x.samp <- seq(0.1, 0.9, length.out = n.samp)
 samp.mesh <- meshgrid(x.samp)
 grid.samp <- rbind(as.vector(samp.mesh$X), as.vector(samp.mesh$Y))
 
