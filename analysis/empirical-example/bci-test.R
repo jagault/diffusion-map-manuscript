@@ -46,9 +46,17 @@ site.dim <- data.table(site.eig$vectors[, rank(site.eig$values,
 setnames(site.dim, cnames)
 setcolorder(site.dim, rev(cnames))
 
+# Add site column
+site.dim[, site := 1:nrow(bci)]
+
 # Plot
 ggplot(site.dim, aes(x = dim1, y = dim2)) +
   geom_point() + 
+  labs(x = "Dimension 1", y = "Dimension 2") + 
+  theme_bw()
+
+ggplot(site.dim, aes(x = dim1, y = dim2)) +
+  geom_text(aes(label = site)) + 
   labs(x = "Dimension 1", y = "Dimension 2") + 
   theme_bw()
 
@@ -65,3 +73,6 @@ ggplot(eig.v, aes(x = rank, y = 1/val)) +
   theme_bw() +
   theme(text = element_text(size = 8))
 
+# NMDS
+nm <- metaMDS(d, k = 2)
+plot(nm, type = "t")
