@@ -110,7 +110,7 @@ s <- HornMat(cm)
 diag(s) <- 0
 
 # Get site laplacian and perform eigen decomposition
-site.lap <- Lap(s, 10)
+site.lap <- Lap(s, 2)
 site.eig <- eigen(site.lap$laplacian)
 
 # Weight eigenvector values by eigenvalue
@@ -142,15 +142,15 @@ setcolorder(site.dim, c("site", "dim1", "dim2", "dim3", "env"))
 # png(filename = paste(here(), "/figures/manifold/",
 #                      "diffmap.png", sep = ""),
 #     height = 4.5, width = 5.5, units = "in", res = 600)
-ggplot(site.dim, aes(x = dim1, y = dim2)) + 
-  geom_point(aes(color = env), size = 5) + 
-  labs(title = "Diffusion Map",
-       x = "Dimension 1", y = "Dimension 2") + 
-  scale_color_continuous(type = "viridis", name = "Env") + 
-  theme_bw() + 
-  theme(legend.key.size = unit(0.3, "in"),
-        text = element_text(size = 30)) + 
-  xlim(-35, 35) + ylim(-35, 35)
+# ggplot(site.dim, aes(x = dim1, y = dim2)) + 
+#   geom_point(aes(color = env), size = 5) + 
+#   labs(title = "Diffusion Map",
+#        x = "Dimension 1", y = "Dimension 2") + 
+#   scale_color_continuous(type = "viridis", name = "Env") + 
+#   theme_bw() + 
+#   theme(legend.key.size = unit(0.3, "in"),
+#         text = element_text(size = 30)) + 
+#   xlim(-35, 35) + ylim(-35, 35)
 # dev.off()
 
 ggplot(site.dim, aes(x = dim1, y = dim2)) + 
@@ -160,7 +160,8 @@ ggplot(site.dim, aes(x = dim1, y = dim2)) +
   scale_color_continuous(type = "viridis", name = "Env") + 
   theme_bw() + 
   theme(legend.key.size = unit(0.3, "in"),
-        text = element_text(size = 30)) 
+        text = element_text(size = 30)) + 
+  xlim(-350, 350) + ylim(-350, 350)
 
 #### NMDS-----------------------------------------------------------------------
 hs <- HornMat(cm)
@@ -204,30 +205,11 @@ ggplot(nmds.env, aes(x = env.dist, y = nmds.dist)) +
   theme_bw() +
   labs(x = "Environmental Distance", y = "NMDS Distance")
 
-# Another try
-test.dat <- data.table(test$points)
-test.dist <-  round(dist(as.matrix(test.dat[, .(MDS1, MDS2)])), 4)
-test.env <- data.table(cbind(test.dist, env.dist))
+# Horn distance
+l.hd <- hd[lower.tri(hd, diag = F)]
+hd.env <- data.table(cbind(l.hd, env.dist))
 
-test.cor <- test.env[, .(spearman = cor(test.dist, env.dist, 
-                                        method = "spearman"),
-                         pearson = cor(test.dist, env.dist))]
-
-ggplot(test.env, aes(x = env.dist, y = test.dist)) + 
+ggplot(hd.env, aes(x = env.dist, y = nmds.dist)) + 
   geom_point() + 
   theme_bw() +
-  labs(x = "Environmental Distance", y = "NMDS Distance")
-
-# Diff dimension 1
-# Diffusion distance
-diff.dist <- round(dist(as.matrix(site.dim[, .(dim1)])), 4)
-diff.env <- data.table(cbind(diff.dist, env.dist))
-
-diff.cor <- diff.env[, .(spearman = cor(diff.dist, env.dist, 
-                                        method = "spearman"),
-                         pearson = cor(diff.dist, env.dist))]
-
-ggplot(diff.env, aes(x = env.dist, y = diff.dist)) + 
-  geom_point() + 
-  theme_bw() +
-  labs(x = "Environmental Distance", y = "Diffusion Distance")
+  labs(x = "Environmental Distance", y = "Horn Distance")
