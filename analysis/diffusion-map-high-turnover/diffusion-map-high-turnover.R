@@ -153,6 +153,17 @@ ggplot() +
   labs(x = "Environmental Variable 1", y = "Environmental Variable 2")
 dev.off()
 
+### Average richness------------------------------------------------------------
+alpha <- vector(mode = "numeric", length = length(comm))
+for (i in 1:length(comm)){
+  alpha[i] <- mean(apply(comm[[i]], MARGIN = 1, function(x) sum(x > 0)))
+}
+
+alpha.summ <- round(data.table(mean = mean(alpha), sd = sd(alpha)), 4)
+
+write.csv(alpha.summ, file = paste(here(), 
+                                   "/analysis/diffusion-map-high-turnover/",
+                                   "richness-summary.csv", sep = ""))
 
 #### Summary of number of disjoint samples--------------------------------------
 # Calculate proportional abundances
