@@ -154,6 +154,22 @@ ggplot() +
 dev.off()
 
 
+### Average richness------------------------------------------------------------
+alpha <- vector(mode = "list", length = length(comm))
+for (i in 1:length(comm)){
+  alpha[[i]] <- data.table(t(apply(comm[[i]], 
+                                   MARGIN = 1, 
+                                   function(x) sum(x > 0))))
+}
+alpha <- rbindlist(alpha)
+alpha <- apply(alpha, MARGIN = 2, mean)
+alpha.summ <- round(data.table(mean = mean(alpha), sd = sd(alpha)), 2)
+
+write.csv(alpha.summ, file = paste(here(), 
+                                   "/analysis/diffusion-map-low-turnover/",
+                                   "richness-summary.csv", sep = ""))
+
+
 #### Summary of number of disjoint samples--------------------------------------
 # Calculate proportional abundances
 cm <- vector(mode = "list", length = n.sim)
