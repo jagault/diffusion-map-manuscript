@@ -154,12 +154,15 @@ ggplot() +
 dev.off()
 
 ### Average richness------------------------------------------------------------
-alpha <- vector(mode = "numeric", length = length(comm))
+alpha <- vector(mode = "list", length = length(comm))
 for (i in 1:length(comm)){
-  alpha[i] <- mean(apply(comm[[i]], MARGIN = 1, function(x) sum(x > 0)))
+  alpha[[i]] <- data.table(t(apply(comm[[i]], 
+                                   MARGIN = 1, 
+                                   function(x) sum(x > 0))))
 }
-
-alpha.summ <- round(data.table(mean = mean(alpha), sd = sd(alpha)), 4)
+alpha <- rbindlist(alpha)
+alpha <- apply(alpha, MARGIN = 2, mean)
+alpha.summ <- round(data.table(mean = mean(alpha), sd = sd(alpha)), 2)
 
 write.csv(alpha.summ, file = paste(here(), 
                                    "/analysis/diffusion-map-high-turnover/",
