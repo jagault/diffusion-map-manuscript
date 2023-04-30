@@ -102,13 +102,13 @@ dens.dt[, spec := as.factor(spec)]
 dens.dt <- dens.dt[, lapply(.SD, as.numeric), by = spec]
 
 # Plot
-# png(filename = paste(here(), "/figures/diffusion-map-high-turnover/",
-#                      "contour-plot.png", sep = ""),
-#     height = 3, width = 3, units = "in", res = 600)
+png(filename = paste(here(), "/figures/diffusion-map-varying-turnover/",
+                     "contour-plot.png", sep = ""),
+    height = 3, width = 3, units = "in", res = 600)
 ggplot(dens.dt, aes(x = x, y = y, z = dens, color = spec)) + 
   geom_contour(show.legend = F) + 
   theme_bw()
-# dev.off()
+dev.off()
 
 #### Generate community realizations--------------------------------------------
 # Sample size = n.samp^2
@@ -157,16 +157,31 @@ for (i in 1:n.sim) {
 }
 
 #### Plot sampling grid on contour plot-----------------------------------------
-# png(filename = paste(here(), "/figures/diffusion-map-high-turnover/",
-#                      "contour-sample.png", sep = ""),
-#     height = 3, width = 3, units = "in", res = 600)
+png(filename = paste(here(), "/figures/diffusion-map-varying-turnover/",
+                     "contour-sample.png", sep = ""),
+    height = 3, width = 3, units = "in", res = 600)
 ggplot() +
   geom_contour(data = dens.dt, aes(x = x, y = y, z = dens, color = spec),
                show.legend = F) + 
   geom_point(data = samp, aes(x = x.samp, y = y.samp), size = 0.5) + 
   theme_bw() + 
   labs(x = "Environmental Variable 1", y = "Environmental Variable 2")
-# dev.off()
+dev.off()
+
+### Average richness------------------------------------------------------------
+alpha <- vector(mode = "list", length = length(comm))
+for (i in 1:length(comm)){
+  alpha[[i]] <- data.table(t(apply(comm[[i]], 
+                                   MARGIN = 1, 
+                                   function(x) sum(x > 0))))
+}
+alpha <- rbindlist(alpha)
+alpha <- apply(alpha, MARGIN = 2, mean)
+alpha.summ <- round(data.table(mean = mean(alpha), sd = sd(alpha)), 2)
+
+write.csv(alpha.summ, file = paste(here(),
+                                   "/analysis/diffusion-map-varying-turnover/",
+                                   "richness-summary.csv", sep = ""))
 
 
 #### Summary of number of disjoint samples--------------------------------------
@@ -194,9 +209,9 @@ dj.summary <- summary(dj)
 dj.summary <- round(unclass(dj.summary), 5)
 dj.summary <- data.table(t(dj.summary))
 
-# write.csv(dj.summary, file = paste(here(), 
-#                                    "/analysis/diffusion-map-high-turnover/",
-#                                    "disjoint-summary.csv", sep = ""))
+write.csv(dj.summary, file = paste(here(),
+                                   "/analysis/diffusion-map-varying-turnover/",
+                                   "disjoint-summary.csv", sep = ""))
 
 
 #### Diffusion map and plot-----------------------------------------------------
@@ -270,14 +285,14 @@ setnames(eig.v, ".id", "sim")
 eig.v[, sim := as.factor(sim)]
 
 # Eigenvalue Plot
-# png(filename = paste(here(), "/figures/diffusion-map-high-turnover/",
-#                      "eigenvalue-plot.png", sep = ""),
-#     height = 2, width = 3, units = "in", res = 600)
+png(filename = paste(here(), "/figures/diffusion-map-varying-turnover/",
+                     "eigenvalue-plot.png", sep = ""),
+    height = 2, width = 3, units = "in", res = 600)
 ggplot(eig.v, aes(x = rank, y = 1/val)) + 
   geom_point(size = 0.1, show.legend = F) + 
   labs(x = "Rank", y = expression(1/lambda)) +
   theme_bw()
-# dev.off()
+dev.off()
 
 ### Summarize eigenvalues to plot mean and std dev
 eig.sd <- copy(eig.v)
@@ -285,30 +300,27 @@ eig.sd[, val := 1/val]
 eig.sd <- eig.sd[, .(mean = mean(val), sd = sd(val)), by = rank]
 
 # Eigenvalue plot with mean and std dev
-# png(filename = paste(here(), "/figures/diffusion-map-high-turnover/",
-#                      "eigenvalue-plot-std-dev.png", sep = ""),
-#     height = 2, width = 3, units = "in", res = 600)
+png(filename = paste(here(), "/figures/diffusion-map-varying-turnover/",
+                     "eigenvalue-plot-std-dev.png", sep = ""),
+    height = 2, width = 3, units = "in", res = 600)
 ggplot(eig.sd, aes(x = rank, y = mean)) + 
   geom_point(size = 0.5) +
   geom_errorbar(aes(ymin = mean  - sd, ymax = mean + sd), width = 0.1) +
   labs(x = "Rank", y = expression(1/lambda)) +
   theme_bw()
-# dev.off()
+dev.off()
 
 # Single diffusion map
-# png(filename = paste(here(), "/figures/diffusion-map-high-turnover/",
-#                      "single-diffusion-map-plot.png", sep = ""),
-#     height = 3, width = 3, units = "in", res = 600)
+png(filename = paste(here(), "/figures/diffusion-map-varying-turnover/",
+                     "single-diffusion-map-plot.png", sep = ""),
+    height = 3, width = 3, units = "in", res = 600)
 ggplot(site.dim[sim == 1,], aes(x = dim1, y = dim2)) + 
   geom_point(show.legend = F, size = 0.5) + 
   labs(x = "Dimension 1", y = "Dimension 2") + 
   theme_bw() 
-# dev.off()
+dev.off()
 
-ggplot(site.dim[sim == 1,], aes(x = dim1, y = dim2)) + 
-  geom_text(aes(label = site), size = 3) +
-  labs(x = "Dimension 1", y = "Dimension 2") + 
-  theme_bw() 
+
 #### Compare diffusion and Horn distances---------------------------------------
 # Add environmental variables to site.dim
 site.dim[, env.x := rep(grid.samp[1, ], length.out = nrow(site.dim))]
@@ -337,33 +349,33 @@ diff.cor.spearman <- summary(diff.cor[, spearman])
 diff.cor.spearman <- round(unclass(diff.cor.spearman), 5)
 diff.cor.spearman <- data.table(t(diff.cor.spearman))
 
-# write.csv(diff.cor.spearman, 
-#           file = paste(here(), 
-#                        "/analysis/diffusion-map-high-turnover/",
-#                        "diffmap-spearman-summary.csv", 
-#                        sep = ""))
+write.csv(diff.cor.spearman,
+          file = paste(here(),
+                       "/analysis/diffusion-map-varying-turnover/",
+                       "diffmap-spearman-summary.csv",
+                       sep = ""))
 
 # Pearson
 diff.cor.pearson <- summary(diff.cor[, pearson])
 diff.cor.pearson <- unclass(diff.cor.pearson)
 diff.cor.pearson <- data.table((t(diff.cor.pearson)))
 
-# write.csv(diff.cor.pearson, 
-#           file = paste(here(), 
-#                        "/analysis/diffusion-map-high-turnover/",
-#                        "diffmap-pearson-summary.csv", 
-#                        sep = ""))
+write.csv(diff.cor.pearson,
+          file = paste(here(),
+                       "/analysis/diffusion-map-varying-turnover/",
+                       "diffmap-pearson-summary.csv",
+                       sep = ""))
 
 
 # Plot diffusion distance vs environmental distance
-# png(filename = paste(here(), "/figures/diffusion-map-high-turnover/",
-#                      "diffusion-distance-plot.png", sep = ""),
-#     height = 2, width = 3, units = "in", res = 600)
+png(filename = paste(here(), "/figures/diffusion-map-varying-turnover/",
+                     "diffusion-distance-plot.png", sep = ""),
+    height = 2, width = 3, units = "in", res = 600)
 ggplot(dist.frame, aes(x = env.dist, y = diff.dist)) + 
   geom_point(show.legend = F, size = 0.1) + 
   theme_bw() +
   labs(x = "Environmental Distance", y = "Diffusion Distance")
-# dev.off()
+dev.off()
 
 #### Horn Distance
 hd.list <- vector(mode = "list", length = n.sim)
@@ -396,32 +408,32 @@ hd.cor.spearman <- summary(hd.cor[, spearman])
 hd.cor.spearman <- round(unclass(hd.cor.spearman), 5)
 hd.cor.spearman <- data.table(t(hd.cor.spearman))
 
-# write.csv(hd.cor.spearman, 
-#           file = paste(here(), 
-#                        "/analysis/diffusion-map-high-turnover/",
-#                        "horn-spearman-summary.csv", 
-#                        sep = ""))
+write.csv(hd.cor.spearman,
+          file = paste(here(),
+                       "/analysis/diffusion-map-varying-turnover/",
+                       "horn-spearman-summary.csv",
+                       sep = ""))
 
 # Pearson
 hd.cor.pearson <- summary(hd.cor[, pearson])
 hd.cor.pearson <- unclass(hd.cor.pearson)
 hd.cor.pearson <- data.table((t(hd.cor.pearson)))
 
-# write.csv(hd.cor.pearson, 
-#           file = paste(here(), 
-#                        "/analysis/diffusion-map-high-turnover/",
-#                        "horn-pearson-summary.csv", 
-#                        sep = ""))
+write.csv(hd.cor.pearson,
+          file = paste(here(),
+                       "/analysis/diffusion-map-varying-turnover/",
+                       "horn-pearson-summary.csv",
+                       sep = ""))
 
 # Plot diffusion distance vs environmental distance
-# png(filename = paste(here(), "/figures/diffusion-map-high-turnover/",
-#                      "horn-distance-plot.png", sep = ""),
-#     height = 2, width = 3, units = "in", res = 600)
+png(filename = paste(here(), "/figures/diffusion-map-varying-turnover/",
+                     "horn-distance-plot.png", sep = ""),
+    height = 2, width = 3, units = "in", res = 600)
 ggplot(hd.frame, aes(x = env.dist, y = horn.dist)) + 
   geom_point(show.legend = F, size = 0.1) + 
   theme_bw() + 
   labs(x = "Environmental Distance", y = "Horn Distance")
-# dev.off()
+dev.off()
 
 #### Compare ordinations--------------------------------------------------------
 # PCoA
@@ -460,18 +472,18 @@ pcoa.ss.summ <- summary(pcoa.ss)
 pcoa.ss.summ <- round(unclass(pcoa.ss.summ), 5)
 pcoa.ss.summ <- data.table(t(pcoa.ss.summ))
 
-# write.csv(pcoa.ss.summ, 
-#           file = paste(here(), 
-#                        "/analysis/diffusion-map-high-turnover/",
-#                        "pcoa-procrustes-summary.csv", 
-#                        sep = ""))
+write.csv(pcoa.ss.summ,
+          file = paste(here(),
+                       "/analysis/diffusion-map-varying-turnover/",
+                       "pcoa-procrustes-summary.csv",
+                       sep = ""))
 
 # Single plot with procrustes sum of squares error
-# png(filename = paste(here(), "/figures/diffusion-map-high-turnover/",
-#                      "pcoa-procrustes-plot.png", sep = ""),
-#     height = 3.5, width = 3.5, units = "in", res = 600)
+png(filename = paste(here(), "/figures/diffusion-map-varying-turnover/",
+                     "pcoa-procrustes-plot.png", sep = ""),
+    height = 3.5, width = 3.5, units = "in", res = 600)
 plot(proc.pcoa[[1]], main = "")
-# dev.off()
+dev.off()
 
 
 # Procrustes statistic for NMDS
@@ -494,18 +506,18 @@ nmds.ss.summ <- summary(nmds.ss)
 nmds.ss.summ <- round(unclass(nmds.ss.summ), 5)
 nmds.ss.summ <- data.table(t(nmds.ss.summ))
 
-# write.csv(nmds.ss.summ, 
-#           file = paste(here(), 
-#                        "/analysis/diffusion-map-high-turnover/",
-#                        "nmds-procrustes-summary.csv", 
-#                        sep = ""))
+write.csv(nmds.ss.summ,
+          file = paste(here(),
+                       "/analysis/diffusion-map-varying-turnover/",
+                       "nmds-procrustes-summary.csv",
+                       sep = ""))
 
 # Single plot with procrustes sum of squares error
-# png(filename = paste(here(), "/figures/diffusion-map-high-turnover/",
-#                      "nmds-procrustes-plot.png", sep = ""),
-#     height = 3.5, width = 3.5, units = "in", res = 600)
+png(filename = paste(here(), "/figures/diffusion-map-varying-turnover/",
+                     "nmds-procrustes-plot.png", sep = ""),
+    height = 3.5, width = 3.5, units = "in", res = 600)
 plot(proc.nmds[[1]], main = "")
-# dev.off()
+dev.off()
 
 
 # Procrustes statistic for diffusion maps
@@ -529,16 +541,15 @@ diff.ss.summ <- summary(diff.ss)
 diff.ss.summ <- round(unclass(diff.ss.summ), 5)
 diff.ss.summ <- data.table(t(diff.ss.summ))
 
-# write.csv(diff.ss.summ, 
-#           file = paste(here(), 
-#                        "/analysis/diffusion-map-high-turnover/",
-#                        "diffmap-procrustes-summary.csv", 
-#                        sep = ""))
+write.csv(diff.ss.summ,
+          file = paste(here(),
+                       "/analysis/diffusion-map-varying-turnover/",
+                       "diffmap-procrustes-summary.csv",
+                       sep = ""))
 
 # Single plot with procrustes sum of squares error
-# png(filename = paste(here(), "/figures/diffusion-map-high-turnover/",
-#                      "diffmap-procrustes-plot.png", sep = ""),
-#     height = 3.5, width = 3.5, units = "in", res = 600)
+png(filename = paste(here(), "/figures/diffusion-map-varying-turnover/",
+                     "diffmap-procrustes-plot.png", sep = ""),
+    height = 3.5, width = 3.5, units = "in", res = 600)
 plot(proc.diff[[1]], main = "")
-# dev.off()
-
+dev.off()
