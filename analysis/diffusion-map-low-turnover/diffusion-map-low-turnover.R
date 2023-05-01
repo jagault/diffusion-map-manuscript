@@ -149,7 +149,7 @@ png(filename = paste(here(), "/figures/diffusion-map-low-turnover/",
 ggplot() +
   geom_contour(data = dens.dt[spec %in% spec.display, ], 
                aes(x = x, y = y, z = dens, color = spec),
-               show.legend = F) + 
+               show.legend = F, bins = 20) + 
   geom_point(data = samp, aes(x = x.samp, y = y.samp), size = 0.5) + 
   theme_bw() + 
   labs(x = "Environmental Variable 1", y = "Environmental Variable 2")
