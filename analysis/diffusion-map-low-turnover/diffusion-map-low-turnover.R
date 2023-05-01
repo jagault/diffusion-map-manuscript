@@ -142,11 +142,13 @@ for (i in 1:n.sim) {
 }
 
 #### Plot sampling grid on contour plot-----------------------------------------
+spec.display <- c(1:100)
 png(filename = paste(here(), "/figures/diffusion-map-low-turnover/",
                      "contour-sample.png", sep = ""),
     height = 3, width = 3, units = "in", res = 600)
 ggplot() +
-  geom_contour(data = dens.dt, aes(x = x, y = y, z = dens, color = spec),
+  geom_contour(data = dens.dt[spec %in% spec.display, ], 
+               aes(x = x, y = y, z = dens, color = spec),
                show.legend = F) + 
   geom_point(data = samp, aes(x = x.samp, y = y.samp), size = 0.5) + 
   theme_bw() + 
