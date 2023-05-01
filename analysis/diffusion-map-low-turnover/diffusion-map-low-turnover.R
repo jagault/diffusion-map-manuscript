@@ -13,7 +13,7 @@ source(here("R", "horn_overlap.R"))
 set.seed(450)
 
 # Size of species inventory 
-n.spec <-  100
+n.spec <-  1000
 
 # Initialize list to store values related to covariance matrix 
 niche <- list()
