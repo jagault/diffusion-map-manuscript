@@ -347,9 +347,9 @@ diff.cor <- dist.frame[, .(spearman = cor(diff.dist, env.dist,
 
 # Summarize and write to file
 # Spearman
-diff.cor.spearman <- summary(diff.cor[, spearman])
-diff.cor.spearman <- round(unclass(diff.cor.spearman), 4)
-diff.cor.spearman <- data.table(t(diff.cor.spearman))
+diff.cor.spearman <- data.table(mean = mean(diff.cor[, spearman]), 
+                                sd = sd(diff.cor[, spearman]))
+diff.cor.spearman <- round(diff.cor.spearman, 4)
 
 write.csv(diff.cor.spearman,
           file = paste(here(),
@@ -358,9 +358,9 @@ write.csv(diff.cor.spearman,
                        sep = ""))
 
 # Pearson
-diff.cor.pearson <- summary(diff.cor[, pearson])
-diff.cor.pearson <- unclass(diff.cor.pearson)
-diff.cor.pearson <- data.table((t(diff.cor.pearson)))
+diff.cor.pearson <- data.table(mean = mean(diff.cor[, pearson]), 
+                                sd = sd(diff.cor[, pearson]))
+diff.cor.pearson <- round(diff.cor.pearson, 4)
 
 write.csv(diff.cor.pearson,
           file = paste(here(),
@@ -406,9 +406,9 @@ hd.cor <- hd.frame[, .(spearman = cor(horn.dist, env.dist, method = "spearman"),
 
 # Summarize and write to file
 # Spearman
-hd.cor.spearman <- summary(hd.cor[, spearman])
-hd.cor.spearman <- round(unclass(hd.cor.spearman), 4)
-hd.cor.spearman <- data.table(t(hd.cor.spearman))
+hd.cor.spearman <- data.table(mean = mean(hd.cor[, spearman]), 
+                                sd = sd(hd.cor[, spearman]))
+hd.cor.spearman <- round(hd.cor.spearman, 4)
 
 write.csv(hd.cor.spearman,
           file = paste(here(),
@@ -417,9 +417,9 @@ write.csv(hd.cor.spearman,
                        sep = ""))
 
 # Pearson
-hd.cor.pearson <- summary(hd.cor[, pearson])
-hd.cor.pearson <- unclass(hd.cor.pearson)
-hd.cor.pearson <- data.table((t(hd.cor.pearson)))
+hd.cor.pearson <- data.table(mean = mean(hd.cor[, pearson]), 
+                               sd = sd(hd.cor[, pearson]))
+hd.cor.pearson <- round(hd.cor.pearson, 4)
 
 write.csv(hd.cor.pearson,
           file = paste(here(),
@@ -470,9 +470,8 @@ for (i in 1:n.sim) {
 }
 
 # Summarize and write to file
-pcoa.ss.summ <- summary(pcoa.ss)
-pcoa.ss.summ <- round(unclass(pcoa.ss.summ), 4)
-pcoa.ss.summ <- data.table(t(pcoa.ss.summ))
+pcoa.ss.summ <- data.table(mean = mean(pcoa.ss), sd = sd(pcoa.ss))
+pcoa.ss.summ <- round(pcoa.ss.summ, 4)
 
 write.csv(pcoa.ss.summ,
           file = paste(here(),
@@ -504,9 +503,8 @@ for (i in 1:n.sim) {
 }
 
 # Summarize and write to file
-nmds.ss.summ <- summary(nmds.ss)
-nmds.ss.summ <- round(unclass(nmds.ss.summ), 4)
-nmds.ss.summ <- data.table(t(nmds.ss.summ))
+nmds.ss.summ <- data.table(mean = mean(nmds.ss), sd = sd(nmds.ss))
+nmds.ss.summ <- round(nmds.ss.summ, 4)
 
 write.csv(nmds.ss.summ,
           file = paste(here(),
@@ -539,9 +537,8 @@ for (i in 1:n.sim) {
 }
 
 # Summarize and write to file
-diff.ss.summ <- summary(diff.ss)
-diff.ss.summ <- round(unclass(diff.ss.summ), 4)
-diff.ss.summ <- data.table(t(diff.ss.summ))
+diff.ss.summ <- data.table(mean = mean(diff.ss), sd = sd(diff.ss))
+diff.ss.summ <- round(diff.ss.summ, 4)
 
 write.csv(diff.ss.summ,
           file = paste(here(),
