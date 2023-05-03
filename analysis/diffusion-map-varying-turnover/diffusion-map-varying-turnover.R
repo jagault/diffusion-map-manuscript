@@ -208,7 +208,7 @@ for (i in 1:n.sim){
 }
 
 dj.summary <- summary(dj)
-dj.summary <- round(unclass(dj.summary), 5)
+dj.summary <- round(unclass(dj.summary), 4)
 dj.summary <- data.table(t(dj.summary))
 
 write.csv(dj.summary, file = paste(here(),
@@ -348,7 +348,7 @@ diff.cor <- dist.frame[, .(spearman = cor(diff.dist, env.dist,
 # Summarize and write to file
 # Spearman
 diff.cor.spearman <- summary(diff.cor[, spearman])
-diff.cor.spearman <- round(unclass(diff.cor.spearman), 5)
+diff.cor.spearman <- round(unclass(diff.cor.spearman), 4)
 diff.cor.spearman <- data.table(t(diff.cor.spearman))
 
 write.csv(diff.cor.spearman,
@@ -407,7 +407,7 @@ hd.cor <- hd.frame[, .(spearman = cor(horn.dist, env.dist, method = "spearman"),
 # Summarize and write to file
 # Spearman
 hd.cor.spearman <- summary(hd.cor[, spearman])
-hd.cor.spearman <- round(unclass(hd.cor.spearman), 5)
+hd.cor.spearman <- round(unclass(hd.cor.spearman), 4)
 hd.cor.spearman <- data.table(t(hd.cor.spearman))
 
 write.csv(hd.cor.spearman,
@@ -471,7 +471,7 @@ for (i in 1:n.sim) {
 
 # Summarize and write to file
 pcoa.ss.summ <- summary(pcoa.ss)
-pcoa.ss.summ <- round(unclass(pcoa.ss.summ), 5)
+pcoa.ss.summ <- round(unclass(pcoa.ss.summ), 4)
 pcoa.ss.summ <- data.table(t(pcoa.ss.summ))
 
 write.csv(pcoa.ss.summ,
@@ -505,7 +505,7 @@ for (i in 1:n.sim) {
 
 # Summarize and write to file
 nmds.ss.summ <- summary(nmds.ss)
-nmds.ss.summ <- round(unclass(nmds.ss.summ), 5)
+nmds.ss.summ <- round(unclass(nmds.ss.summ), 4)
 nmds.ss.summ <- data.table(t(nmds.ss.summ))
 
 write.csv(nmds.ss.summ,
@@ -540,7 +540,7 @@ for (i in 1:n.sim) {
 
 # Summarize and write to file
 diff.ss.summ <- summary(diff.ss)
-diff.ss.summ <- round(unclass(diff.ss.summ), 5)
+diff.ss.summ <- round(unclass(diff.ss.summ), 4)
 diff.ss.summ <- data.table(t(diff.ss.summ))
 
 write.csv(diff.ss.summ,
