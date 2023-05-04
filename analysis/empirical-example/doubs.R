@@ -23,8 +23,12 @@ cm <- cm[-8, ]
 # Convert to proportional abundance
 cm <- decostand(cm, method = "total")
 
-### PCA of environmnetal data---------------------------------------------------
+# Divide distance from source by 10 (see help file for Doubs)
 env <- data.table(doubs$env[-8, ])
+env <- cbind(env, doubs$xy[-8, ])
+env[, dfs := dfs/10]
+
+### PCA of environmnetal data---------------------------------------------------
 env.pc <- rda(env, scale = T)
 summary(env.pc)
 
@@ -33,13 +37,21 @@ biplot(env.pc, scaling = "sites")
 # goes from oxygen rich and nutrient poor to oxygen poor and nutrient rich.
 
 env <- cbind(env, scores(env.pc)$sites)
-env <- cbind(env, doubs$xy[-8, ])
 
+
+### Plot river course-----------------------------------------------------------
+png(filename = paste(here(), "/figures/empirical-example/",
+                     "river.png", sep = ""),
+    height = 4, width = 6, units = "in", res = 600)
 ggplot(env, aes(x = x, y = y)) +
   geom_path(linetype = 3) +
-  geom_point(aes(color = PC1),size = 3) +
-  scale_color_viridis(option = "plasma") +
-  theme_bw()
+  geom_point(aes(color = dfs), size = 3) +
+  scale_color_viridis(option = "plasma", name = "DFS") +
+  labs(x = "EW Coordinate (km)", y = "NS Coordinate (km)") +
+  theme_bw() +
+  theme(legend.key.size = unit(0.2, "in"),
+        text = element_text(size = 15))
+dev.off()
 
 #### Diffusion map--------------------------------------------------------------
 # Calculate distances and convert to symmetric similarity matrix
@@ -84,19 +96,29 @@ eig.v <- eig.v[-1,]
 eig.v[, rank := rank(val)]
 
 # Plot
+png(filename = paste(here(), "/figures/empirical-example/",
+                     "eigenvalue-plot.png", sep = ""),
+    height = 4, width = 6, units = "in", res = 600)
 ggplot(eig.v, aes(x = rank, y = 1/val)) + 
-  geom_point() + 
+  geom_point(size = 3) + 
   labs(x = "Rank", y = expression(1/lambda)) +
   theme_bw() +
-  theme(text = element_text(size = 8)) 
+  theme(text = element_text(size = 15)) 
+dev.off()
 
 # Plot diffmap weighted by eigenvalues
-ggplot(site.dim, aes(x = dim1, y = dim2, color = PC1)) + 
+png(filename = paste(here(), "/figures/empirical-example/",
+                     "diffusion-map.png", sep = ""),
+    height = 4, width = 6, units = "in", res = 600)
+ggplot(site.dim, aes(x = dim1, y = dim2, color = dfs)) + 
   geom_point(size = 3) + 
   labs(x = "Dimension 1", y = "Dimension 2") +
-  scale_color_viridis(option = "plasma") +
+  scale_color_viridis(option = "plasma", name = "DFS") +
   theme_bw() +
-  xlim(-3.2, 3.2) + ylim(-3.2, 3.2)
+  xlim(-3.2, 3.2) + ylim(-3.2, 3.2) +
+  theme(legend.key.size = unit(0.2, "in"),
+        text = element_text(size = 15))
+dev.off()
 
 
 #### NMDS-----------------------------------------------------------------------
@@ -106,23 +128,41 @@ nm <- metaMDS(d, k = 2)
 
 site.dim <- cbind(site.dim, nm$points)
 
-ggplot(site.dim, aes(x = MDS1, y = MDS2, color = PC1)) + 
+png(filename = paste(here(), "/figures/empirical-example/",
+                     "nmds.png", sep = ""),
+    height = 4, width = 6, units = "in", res = 600)
+ggplot(site.dim, aes(x = MDS1, y = MDS2, color = dfs)) +
   geom_point(size = 3) +
-  scale_color_viridis(option = "plasma") +
-  theme_bw()
-  
+  scale_color_viridis(option = "plasma", name = "DFS") +
+  labs(x = "MDS1", y = "MDS2") +
+  theme_bw() +
+    theme(legend.key.size = unit(0.2, "in"),
+          text = element_text(size = 15))
+dev.off()
 
 #### Distance-------------------------------------------------------------------
 diff.dist <- dist(site.dim[, .(dim1)])
-env.dist <- dist(site.dim[, PC1])
+env.dist <- dist(site.dim[, .(dfs)])
 horn.dist <- d[lower.tri(d, diag = F)]
 
 dist.dat <- data.table(cbind(diff.dist, horn.dist, env.dist))
 
+png(filename = paste(here(), "/figures/empirical-example/",
+                     "diffusion-distance-plot.png", sep = ""),
+    height = 4, width = 6, units = "in", res = 600)
 ggplot(dist.dat, aes(x = env.dist, y = diff.dist)) +
   geom_point() +
-  theme_bw()
+  theme_bw() +
+  labs(x = "Distance From Source (km)", y = "Diffusion Distance") +
+  theme(text = element_text(size = 15))
+dev.off()
 
+png(filename = paste(here(), "/figures/empirical-example/",
+                     "horn-distance-plot.png", sep = ""),
+    height = 4, width = 6, units = "in", res = 600)
 ggplot(dist.dat, aes(x = env.dist, y = horn.dist)) +
   geom_point() +
-  theme_bw()
+  theme_bw() +
+  labs(x = "Distance From Source (km)", y = "Horn Distance") +
+  theme(text = element_text(size = 15))
+dev.off()
