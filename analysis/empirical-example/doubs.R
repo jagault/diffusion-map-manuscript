@@ -166,3 +166,101 @@ ggplot(dist.dat, aes(x = env.dist, y = horn.dist)) +
   labs(x = "Distance From Source (km)", y = "Horn Distance") +
   theme(text = element_text(size = 15))
 dev.off()
+
+### Vary nearest neighbors for diffusion map------------------------------------
+# Calculate distances and convert to symmetric similarity matrix
+s <- HornMat(cm)
+diag(s) <- 0
+
+nn <- c(2, 5, 15, 29)
+dim.list <- vector(mode = "list", length = length(nn))
+
+for (i in 1:length(nn)){
+  
+  # Get site laplacian and perform eigen decomposition
+  site.lap <- Lap(s, nn[i])
+  site.eig <- eigen(site.lap$laplacian)
+  
+  # Weight eigenvector values by eigenvalue
+  for (j in 1:ncol(site.eig$vectors)){
+    site.eig$vectors[, j] <- site.eig$vectors[, j]/site.eig$values[j]
+  }
+  
+  # Select number of dimensions to keep
+  k <- 1:3
+  # Create vector of column names
+  cnames <- paste("dim", rev(k), sep = "")
+  
+  # Select eigenvectors corresponding to the first k dimensions
+  site.dim <- data.table(site.eig$vectors[, rank(site.eig$values, 
+                                                 ties.method = "first") %in% 
+                                            (k + 1)])
+  # Set column names and column order
+  setnames(site.dim, cnames)
+  setcolorder(site.dim, rev(cnames))
+  
+  # Add site and env column
+  site.dim[, site := rownames(cm)]
+  site.dim[, site:= as.factor(site)]
+  
+  # site.dim[, richness := apply(cm > 0, sum, MARGIN = 1)]
+  setcolorder(site.dim, c("site", "dim1", "dim2", "dim3"))
+  site.dim <- cbind(site.dim, env)
+  
+  dim.list[[i]] <- site.dim
+  
+  
+}
+
+dim <- rbindlist(dim.list, idcol = T)
+
+png(filename = paste(here(), "/figures/empirical-example/",
+                     "diffusion-map-nn2.png", sep = ""),
+    height = 4, width = 6, units = "in", res = 600)
+ggplot(dim[.id == 1, ], aes(x = dim1, y = dim2, color = dfs)) + 
+  geom_point(size = 3) + 
+  labs(x = "Dimension 1", y = "Dimension 2") +
+  scale_color_viridis(option = "plasma", name = "DFS") +
+  theme_bw() +
+  theme(legend.key.size = unit(0.2, "in"),
+        text = element_text(size = 15))
+dev.off()
+
+png(filename = paste(here(), "/figures/empirical-example/",
+                     "diffusion-map-nn5.png", sep = ""),
+    height = 4, width = 6, units = "in", res = 600)
+ggplot(dim[.id == 2, ], aes(x = dim1, y = -dim2, color = dfs)) + 
+  geom_point(size = 3) + 
+  labs(x = "Dimension 1", y = "Dimension 2") +
+  scale_color_viridis(option = "plasma", name = "DFS") +
+  theme_bw() +
+  theme(legend.key.size = unit(0.2, "in"),
+        text = element_text(size = 15)) +
+  xlim(c(-6, 5)) + ylim(c(-6, 5))
+dev.off()
+
+png(filename = paste(here(), "/figures/empirical-example/",
+                     "diffusion-map-nn15.png", sep = ""),
+    height = 4, width = 6, units = "in", res = 600)
+ggplot(dim[.id == 3, ], aes(x = -dim1, y = dim2, color = dfs)) + 
+  geom_point(size = 3) + 
+  labs(x = "Dimension 1", y = "Dimension 2") +
+  scale_color_viridis(option = "plasma", name = "DFS") +
+  theme_bw() +
+  theme(legend.key.size = unit(0.2, "in"),
+        text = element_text(size = 15)) +
+  xlim(c(-1.1, 1)) +  ylim(c(-1.1, 1))
+dev.off()
+
+png(filename = paste(here(), "/figures/empirical-example/",
+                     "diffusion-map-nn29.png", sep = ""),
+    height = 4, width = 6, units = "in", res = 600)
+ggplot(dim[.id == 4, ], aes(x = dim1, y = dim2, color = dfs)) + 
+  geom_point(size = 3) + 
+  labs(x = "Dimension 1", y = "Dimension 2") +
+  scale_color_viridis(option = "plasma", name = "DFS") +
+  theme_bw() +
+  theme(legend.key.size = unit(0.2, "in"),
+        text = element_text(size = 15)) +
+  xlim(c(-0.75, 0.5)) + ylim(c(-0.75, 0.5))
+dev.off()
