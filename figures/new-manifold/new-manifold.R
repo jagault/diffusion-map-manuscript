@@ -275,24 +275,16 @@ ggplot(diff.env, aes(x = env.dist, y = diff.dist)) +
   theme(text = element_text(size = 15))
 dev.off()
 
-# # NMDS distance
-# nmds.dist <- round(dist(nm$points), 4)
-# nmds.env <- data.table(cbind(nmds.dist, env.dist))
-# 
-# nmds.cor <- nmds.env[, .(spearman = cor(nmds.dist, env.dist, 
-#                                         method = "spearman"),
-#                          pearson = cor(nmds.dist, env.dist))]
-# 
-# ggplot(nmds.env, aes(x = env.dist, y = nmds.dist)) + 
-#   geom_point() + 
-#   theme_bw() +
-#   labs(x = "Environmental Distance", y = "NMDS Distance")
-# 
-# # Horn distance
-# l.hd <- hd[lower.tri(hd, diag = F)]
-# hd.env <- data.table(cbind(l.hd, env.dist))
-# 
-# ggplot(hd.env, aes(x = env.dist, y = nmds.dist)) + 
-#   geom_point() + 
-#   theme_bw() +
-#   labs(x = "Environmental Distance", y = "Horn Distance")
+# Horn distance
+l.hd <- hd[lower.tri(hd, diag = F)]
+hd.env <- data.table(cbind(l.hd, env.dist))
+
+png(filename = paste(here(), "/figures/new-manifold/",
+                     "horn-distance-plot.png", sep = ""),
+    height = 4, width = 6, units = "in", res = 600)
+ggplot(hd.env, aes(x = env.dist, y = l.hd)) +
+  geom_point(size = 0.5) +
+  theme_bw() +
+  labs(x = "Environmental Distance", y = "Horn Distance") +
+  theme(text = element_text(size = 15))
+dev.off()
