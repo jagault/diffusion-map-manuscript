@@ -172,7 +172,7 @@ dev.off()
 s <- HornMat(cm)
 diag(s) <- 0
 
-nn <- c(2, 5, 15, 29)
+nn <- c(3, 5, 15, 29)
 dim.list <- vector(mode = "list", length = length(nn))
 
 for (i in 1:length(nn)){
@@ -215,7 +215,7 @@ for (i in 1:length(nn)){
 dim <- rbindlist(dim.list, idcol = T)
 
 png(filename = paste(here(), "/figures/empirical-example/",
-                     "diffusion-map-nn2.png", sep = ""),
+                     "diffusion-map-nn3.png", sep = ""),
     height = 4, width = 6, units = "in", res = 600)
 ggplot(dim[.id == 1, ], aes(x = dim1, y = dim2, color = dfs)) + 
   geom_point(size = 3) + 
@@ -223,7 +223,8 @@ ggplot(dim[.id == 1, ], aes(x = dim1, y = dim2, color = dfs)) +
   scale_color_viridis(option = "plasma", name = "DFS") +
   theme_bw() +
   theme(legend.key.size = unit(0.2, "in"),
-        text = element_text(size = 15))
+        text = element_text(size = 15)) +
+  xlim(c(-8, 7)) + ylim(c(-8, 7))
 dev.off()
 
 png(filename = paste(here(), "/figures/empirical-example/",
