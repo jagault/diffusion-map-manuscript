@@ -537,3 +537,85 @@ png(filename = paste(here(), "/figures/diffusion-map-high-turnover-high-S/",
     height = 3.5, width = 3.5, units = "in", res = 600)
 plot(proc.diff[[1]], main = "")
 dev.off()
+
+
+#### Vary number of nearest neighbors-------------------------------------------
+s1 <- s[[1]]
+
+nn <- c(3, 5, 50, 100)
+dim.list <- vector(mode = "list", length = length(nn))
+
+for (i in 1:length(nn)){
+  
+  # Get site laplacian and perform eigen decomposition
+  site.lap <- Lap(s1, nn[i])
+  site.eig <- eigen(site.lap$laplacian)
+  
+  # Weight eigenvector values by eigenvalue
+  for (j in 1:ncol(site.eig$vectors)){
+    site.eig$vectors[, j] <- site.eig$vectors[, j]/site.eig$values[j]
+  }
+  
+  # Select number of dimensions to keep
+  k <- 1:3
+  # Create vector of column names
+  cnames <- paste("dim", rev(k), sep = "")
+  
+  # Select eigenvectors corresponding to the first k dimensions
+  site.dim <- data.table(site.eig$vectors[, rank(site.eig$values, 
+                                                 ties.method = "first") %in% 
+                                            (k + 1)])
+  # Set column names and column order
+  setnames(site.dim, cnames)
+  setcolorder(site.dim, rev(cnames))
+
+  dim.list[[i]] <- site.dim
+  
+}
+
+dim <- rbindlist(dim.list, idcol = T)
+
+png(filename = paste(here(), "/figures/diffusion-map-high-turnover-high-S/",
+                     "diffusion-map-nn3.png", sep = ""),
+    height = 4, width = 6, units = "in", res = 600)
+ggplot(dim[.id == 1, ], aes(x = dim1, y = dim2)) + 
+  geom_point(size = 3) + 
+  labs(x = "Dimension 1", y = "Dimension 2") +
+  theme_bw() +
+  theme(legend.key.size = unit(0.2, "in"),
+        text = element_text(size = 15))
+dev.off()
+
+png(filename = paste(here(), "/figures/diffusion-map-high-turnover-high-S/",
+                     "diffusion-map-nn5.png", sep = ""),
+    height = 4, width = 6, units = "in", res = 600)
+ggplot(dim[.id == 2, ], aes(x = dim1, y = -dim2)) + 
+  geom_point(size = 3) + 
+  labs(x = "Dimension 1", y = "Dimension 2") +
+  theme_bw() +
+  theme(legend.key.size = unit(0.2, "in"),
+        text = element_text(size = 15)) 
+dev.off()
+
+png(filename = paste(here(), "/figures/diffusion-map-high-turnover-high-S/",
+                     "diffusion-map-nn50.png", sep = ""),
+    height = 4, width = 6, units = "in", res = 600)
+ggplot(dim[.id == 3, ], aes(x = -dim1, y = dim2)) + 
+  geom_point(size = 3) + 
+  labs(x = "Dimension 1", y = "Dimension 2") +
+  scale_color_viridis(option = "plasma", name = "DFS") +
+  theme_bw() +
+  theme(legend.key.size = unit(0.2, "in"),
+        text = element_text(size = 15))
+dev.off()
+
+png(filename = paste(here(), "/figures/diffusion-map-high-turnover-high-S/",
+                     "diffusion-map-nn100.png", sep = ""),
+    height = 4, width = 6, units = "in", res = 600)
+ggplot(dim[.id == 4, ], aes(x = dim1, y = dim2)) + 
+  geom_point(size = 3) + 
+  labs(x = "Dimension 1", y = "Dimension 2") +
+  theme_bw() +
+  theme(legend.key.size = unit(0.2, "in"),
+        text = element_text(size = 15))
+dev.off()
