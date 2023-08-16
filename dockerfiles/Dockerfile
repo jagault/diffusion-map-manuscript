@@ -11,6 +11,8 @@ RUN install2.r \
     ggplot2 \
     RColorBrewer \
     devtools \
-    pracma
+    pracma \
+    ade4 \
+    viridis
 
 RUN R -e "devtools::install_github('AckerDWM/gg3D')"
